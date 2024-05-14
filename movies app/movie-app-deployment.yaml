@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: movies-app
 spec:
-  replicas: 2  # Number of pod replicas
+  replicas: 2
   selector:
     matchLabels:
       app: movies-app
@@ -14,9 +14,26 @@ spec:
     spec:
       containers:
       - name: movies-app
-        image: dhash23/movies-app:latest  # Update with your image name if pushed to Docker Hub
-        ports:  # Indent this section one level
-          - containerPort: 3000
+        image: dhash23/movies-app:latest
+        ports:
+        - containerPort: 3000
         env:
-          - name: MONGO_URI  # Define environment variable for MongoDB connection string
-            value: "mongodb://mongodb-service:27017/sample_mflix"  # check if this correct
+        - name: MONGO_URI
+          valueFrom:
+            configMapKeyRef:
+              name: mongodb-config
+              key: MONGO_URI_TEMPLATE
+        volumeMounts:
+        - name: mongodb-credentials
+          mountPath: /etc/mongodb-credentials
+          readOnly: true
+        - name: mongodb-config
+          mountPath: /etc/mongodb-config
+          readOnly: true
+      volumes:
+      - name: mongodb-credentials
+        secret:
+          secretName: mongodb-credentials
+      - name: mongodb-config
+        configMap:
+          name: mongodb-config
