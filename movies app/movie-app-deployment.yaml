@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: movies-app
+spec:
+  replicas: 2  # Number of pod replicas
+  selector:
+    matchLabels:
+      app: movies-app
+  template:
+    metadata:
+      labels:
+        app: movies-app
+    spec:
+      containers:
+      - name: movies-app
+        image: dhash23/movies-app:latest  # Update with your image name if pushed to Docker Hub
+        ports:  # Indent this section one level
+          - containerPort: 3000
+        env:
+          - name: MONGO_URI  # Define environment variable for MongoDB connection string
+            value: "mongodb://mongodb-service:27017/sample_mflix"  # check if this correct

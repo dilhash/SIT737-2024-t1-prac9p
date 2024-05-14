@@ -6,14 +6,32 @@ const path = require('path');
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+// Connect to MongoDB
+//connect string is wrong need to fix
+//better if can be get automaictally form
+//mongodb+srv://admin:Fgqt48qK515Di1HX@clustersit737.n3psu4f.mongodb.net/
+//mongodb://localhost:32000/sample_mflix
+//mongodb://localhost:27017/sample_mflix
+// Message before connecting to MongoDB
+console.log("Attempting to connect to mongodb://localhost:27017/sample_mflix...");
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://admin:Fgqt48qK515Di1HX@clustersit737.n3psu4f.mongodb.net/sample_mflix', {
+mongoose.connect('mongodb://mongodb:27017/sample_mflix', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+// Display success or failure messages
+db.on('error', (err) => {
+  console.error('MongoDB connection error:', err);
+  console.log("Failed to connect to MongoDB.");
+});
+
+db.once('open', () => {
+  console.log("Successfully connected to MongoDB.");
+});
+
 
 // Movie Schema
 const movieSchema = new mongoose.Schema({
