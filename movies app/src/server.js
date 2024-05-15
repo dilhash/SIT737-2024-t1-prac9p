@@ -8,7 +8,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Connect to MongoDB
-const mongoUri = `mongodb://${encodeURIComponent('db-user')}:${encodeURIComponent('password123')}@mongodb:27017/sample_mflix`;
+const mongoUsername = process.env.DB_USERNAME || 'db-user';
+const mongoPassword = process.env.DB_PASSWORD || 'password123';
+const mongoUri = `mongodb://${encodeURIComponent(mongoUsername)}:${encodeURIComponent(mongoPassword)}@mongodb:27017/sample_mflix`;
 console.log(`Attempting to connect to ${mongoUri}...`);
 
 mongoose.connect(mongoUri, {
@@ -26,8 +28,6 @@ db.on('error', (err) => {
 db.once('open', () => {
   console.log("Successfully connected to MongoDB.");
 });
-
-
 // Movie Schema
 const movieSchema = new mongoose.Schema({
   title: String,
