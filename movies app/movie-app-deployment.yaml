@@ -19,21 +19,11 @@ spec:
         - containerPort: 3000
         env:
         - name: MONGO_URI
-          valueFrom:
-            configMapKeyRef:
-              name: mongodb-config
-              key: MONGO_URI_TEMPLATE
-        volumeMounts:
-        - name: mongodb-credentials
-          mountPath: /etc/mongodb-credentials
-          readOnly: true
-        - name: mongodb-config
-          mountPath: /etc/mongodb-config
-          readOnly: true
+          value: "mongodb://$(USERNAME):$(PASSWORD)@mongodb:27017/sample_mflix"
+        envFrom:
+        - secretRef:
+            name: mongodb-credentials
       volumes:
       - name: mongodb-credentials
         secret:
           secretName: mongodb-credentials
-      - name: mongodb-config
-        configMap:
-          name: mongodb-config
